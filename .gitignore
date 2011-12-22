@@ -1,0 +1,8 @@
+.project
+.classpath
+*~
+*.diff
+*.patch
+.DS_Store
+.settings
+target
