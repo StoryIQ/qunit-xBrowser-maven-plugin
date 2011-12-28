@@ -1,22 +1,18 @@
 package com.storyiq.mavenplugin.qunit;
 
-
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * Goal which starts QUnit plugin in interactive mode. This allows developers to
- * manually run QUnit tests in a web browser to receive feedback. Refreshing the
- * QUnit test in the web browser will load any JavaScript code changes from
- * disk, allowing easy TDD of JavaScript without having to restart any services.
  * 
- * @goal interactive
- * @requiresDirectInvocation true
+ * @goal test
+ * @phase test
  */
-public class InteractiveMojo extends AbstractQUnitMojo {
+public class UnitTestMojo extends AbstractQUnitMojo {
 
     @Override
-    public void execute() throws MojoExecutionException {
+    public void execute() throws MojoExecutionException, MojoFailureException {
         final Log log = getLog();
         service = new HttpService(getPort(), getResourceMap());
         try {
@@ -26,10 +22,13 @@ public class InteractiveMojo extends AbstractQUnitMojo {
         } catch (Exception e) {
             throw new MojoExecutionException("Starting HTTP Service Failed", e);
         }
+        
         try {
+            service.stop();
             service.waitUntilFinished();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             log.warn("HTTP Service has failed to shutdown correctly", e);
         }
     }
+
 }

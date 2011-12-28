@@ -8,19 +8,36 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Collection;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-public class InteractiveMojoTests {
+@RunWith(Parameterized.class)
+public class SourceMappingTests {
 
     private static final String TEST_FOLDER_CONTEXT = "/test";
     private static final String ROOT_CONTEXT = "/";
     private static final File DIRECTORY = new File(".");
+    
+    private final AbstractQUnitMojo mojoUnderTest;
 
+    public SourceMappingTests(AbstractQUnitMojo mojoUnderTest) {
+        this.mojoUnderTest = mojoUnderTest;
+    }
+    
+    @Parameterized.Parameters
+    public static Collection<AbstractQUnitMojo[]> mojos() {
+        return Arrays.asList(new AbstractQUnitMojo[] {new InteractiveMojo()}, new AbstractQUnitMojo[] {new UnitTestMojo()});
+    }
+    
     @Test
-    public void noDuplicateResourceContexts() {
-        InteractiveMojo mojo = createMojo();
+    public void noDuplicateResourceContexts() throws MojoFailureException {
+        AbstractQUnitMojo mojo = createMojo();
         mojo.setTestSourceContext(ROOT_CONTEXT);
         mojo.setTestSourceDirectory(DIRECTORY);
         mojo.setSourcePaths(new Mapping[] {
@@ -36,8 +53,8 @@ public class InteractiveMojoTests {
     }
 
     @Test
-    public void resourceContextsShouldNotMatchTestSourceContext() {
-        InteractiveMojo mojo = createMojo();
+    public void resourceContextsShouldNotMatchTestSourceContext() throws MojoFailureException {
+        AbstractQUnitMojo mojo = createMojo();
         mojo.setTestSourceContext(TEST_FOLDER_CONTEXT);
         mojo.setTestSourceDirectory(DIRECTORY);
         mojo.setSourcePaths(new Mapping[] { new Mapping(TEST_FOLDER_CONTEXT,
@@ -53,8 +70,8 @@ public class InteractiveMojoTests {
     }
 
     @Test
-    public void testSourceDirectoryMustExist() {
-        InteractiveMojo mojo = createMojo();
+    public void testSourceDirectoryMustExist() throws MojoFailureException {
+        AbstractQUnitMojo mojo = createMojo();
         mojo.setTestSourceContext(ROOT_CONTEXT);
         File mockDirectory = mock(File.class);
         when(mockDirectory.exists()).thenReturn(false);
@@ -71,8 +88,8 @@ public class InteractiveMojoTests {
     }
 
     @Test
-    public void testSourceDirectoryMustBeADirectory() throws URISyntaxException {
-        InteractiveMojo mojo = createMojo();
+    public void testSourceDirectoryMustBeADirectory() throws URISyntaxException, MojoFailureException {
+        AbstractQUnitMojo mojo = createMojo();
         mojo.setTestSourceContext(ROOT_CONTEXT);
         File mockDirectory = mock(File.class);
         when(mockDirectory.toURI()).thenReturn(new URI("file:/"));
@@ -91,8 +108,8 @@ public class InteractiveMojoTests {
     }
 
     @Test
-    public void mappedSourcePathDirectoriesMustExist() {
-        InteractiveMojo mojo = createMojo();
+    public void mappedSourcePathDirectoriesMustExist() throws MojoFailureException {
+        AbstractQUnitMojo mojo = createMojo();
         mojo.setTestSourceContext(ROOT_CONTEXT);
         File mockDirectory = mock(File.class);
         when(mockDirectory.exists()).thenReturn(false);
@@ -111,8 +128,8 @@ public class InteractiveMojoTests {
 
     @Test(timeout = 5000)
     public void mappedSourceDirectoryMustBeADirectory()
-            throws URISyntaxException {
-        InteractiveMojo mojo = createMojo();
+            throws URISyntaxException, MojoFailureException {
+        AbstractQUnitMojo mojo = createMojo();
         mojo.setTestSourceContext(ROOT_CONTEXT);
         File mockDirectory = mock(File.class);
         when(mockDirectory.toURI()).thenReturn(new URI("file:/"));
@@ -130,15 +147,15 @@ public class InteractiveMojoTests {
         }
     }
 
-    private InteractiveMojo createMojo() {
-        InteractiveMojo mojo = new InteractiveMojo();
+    private AbstractQUnitMojo createMojo() {
+        AbstractQUnitMojo mojo = mojoUnderTest;
         mojo.setServer(mock(HttpService.class));
         return mojo;
     }
 
     @Test
-    public void mappedContextsShouldNotBeEmpty() {
-        InteractiveMojo mojo = createMojo();
+    public void mappedContextsShouldNotBeEmpty() throws MojoFailureException {
+        AbstractQUnitMojo mojo = createMojo();
         mojo.setTestSourceContext(ROOT_CONTEXT);
         mojo.setTestSourceDirectory(DIRECTORY);
         mojo.setSourcePaths(new Mapping[] { new Mapping("", DIRECTORY),
@@ -153,8 +170,8 @@ public class InteractiveMojoTests {
     }
 
     @Test
-    public void mappedDirectoryShouldNotBeNull() {
-        InteractiveMojo mojo = createMojo();
+    public void mappedDirectoryShouldNotBeNull() throws MojoFailureException {
+        AbstractQUnitMojo mojo = createMojo();
         mojo.setTestSourceContext(ROOT_CONTEXT);
         mojo.setTestSourceDirectory(DIRECTORY);
         mojo.setSourcePaths(new Mapping[] { new Mapping(TEST_FOLDER_CONTEXT,
