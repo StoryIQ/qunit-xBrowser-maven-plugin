@@ -18,14 +18,7 @@ public class InteractiveMojo extends AbstractQUnitMojo {
     @Override
     public void execute() throws MojoExecutionException {
         final Log log = getLog();
-        service = new HttpService(getPort(), getResourceMap());
-        try {
-            log.info("Starting HTTP Service");
-            service.start();
-            log.info("HTTP Service Started");
-        } catch (Exception e) {
-            throw new MojoExecutionException("Starting HTTP Service Failed", e);
-        }
+        startHttpService();
         try {
             service.waitUntilFinished();
         } catch (InterruptedException e) {

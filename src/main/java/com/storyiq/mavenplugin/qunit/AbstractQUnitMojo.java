@@ -113,6 +113,18 @@ public abstract class AbstractQUnitMojo extends AbstractMojo {
                     + " must be a directory");
         }
     }
+    
+    protected void startHttpService() throws MojoExecutionException {
+        final Log log = getLog();
+        service = new HttpService(getPort(), getResourceMap());
+        try {
+            log.info("Starting HTTP Service");
+            service.start();
+            log.info("HTTP Service Started");
+        } catch (Exception e) {
+            throw new MojoExecutionException("Starting HTTP Service Failed", e);
+        }
+    }
 
     public int getPort() {
         return port;
