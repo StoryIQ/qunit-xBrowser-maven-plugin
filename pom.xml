@@ -10,7 +10,7 @@
 	<groupId>com.storyiq.oss</groupId>
 	<artifactId>qunit-xbrowser-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
-	<version>0.1</version>
+	<version>0.2-SNAPSHOT</version>
 	<name>qunit xBrowser maven plugin</name>
 	<description>Maven Plugin for running javascript unit tests on multiple web browsers for compatibility testing. qunit is the supported javascript unit testing framework and cross browser testing is done using Selenium. </description>
 	<url>https://github.com/StoryIQ/qunit-xBrowser-maven-plugin</url>
