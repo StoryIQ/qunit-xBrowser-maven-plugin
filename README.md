@@ -1,5 +1,27 @@
-#qunit xBrowser Maven Plugin
+#QUnit xBrowser Maven Plugin
 Maven Plugin for running javascript unit tests using qunit on multiple web browsers. The cross browser testing is provided by Selenium. 
+
+## Getting Started
+
+Final releases will be published in [Maven Central](http://search.maven.org/), so no additional repositories are required. Until then you can grab 
+development SNAPSHOT releases by adding this repository to your POM:
+
+```xml
+<repository>
+    <id>sonatype-snapshots</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+</repository>
+```
+
+Now you can use the plugin by adding the following in your POM:
+
+```xml
+<plugin>
+    <groupId>com.storyiq.oss</groupId>
+    <artifactId>qunit-xbrowser-maven-plugin</artifactId>
+    <version>0.2-SNAPSHOT</version>             
+</plugin>
+```
 
 ## License and Copyright
 
