@@ -3,7 +3,7 @@ package com.storyiq.mavenplugin.qunit;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-public class UrlFactoryTests {
+public class UrlFactoryTest {
 
     @Test
     public void includeHttpPortInUrl() {

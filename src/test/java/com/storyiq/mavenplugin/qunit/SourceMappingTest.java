@@ -18,7 +18,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
-public class SourceMappingTests {
+public class SourceMappingTest {
 
     private static final String TEST_FOLDER_CONTEXT = "/test";
     private static final String ROOT_CONTEXT = "/";
@@ -26,7 +26,7 @@ public class SourceMappingTests {
     
     private final AbstractQUnitMojo mojoUnderTest;
 
-    public SourceMappingTests(AbstractQUnitMojo mojoUnderTest) {
+    public SourceMappingTest(AbstractQUnitMojo mojoUnderTest) {
         this.mojoUnderTest = mojoUnderTest;
     }
     

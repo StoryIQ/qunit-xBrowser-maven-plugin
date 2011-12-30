@@ -10,6 +10,11 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
 
+import com.storyiq.mavenplugin.qunit.reporting.CompositeReporter;
+import com.storyiq.mavenplugin.qunit.reporting.LoggingReporter;
+import com.storyiq.mavenplugin.qunit.reporting.ResultReporter;
+import com.storyiq.mavenplugin.qunit.reporting.SummaryReporter;
+
 /**
  * 
  * @goal test
@@ -55,26 +60,36 @@ public class UnitTestMojo extends AbstractQUnitMojo {
             return;
         }
 
-        service = new HttpService(getPort(), getResourceMap());
-        try {
-            log.info("Starting HTTP Service");
-            service.start();
-            log.info("HTTP Service Started");
+        startHttpService();
+        UrlFactory urlFactory = new UrlFactory(getTestSourceContext(),
+                getPort());
+        SummaryReporter resultsSummary = new SummaryReporter(System.out);
+        ResultReporter reporter = new CompositeReporter(new LoggingReporter(log), resultsSummary);
+        UnitTestRunner runner = new UnitTestRunner(reporter, urlFactory);
+        try {        
+            runner.runTests(getQUnitTests());            
         } catch (Exception e) {
-            throw new MojoExecutionException("Starting HTTP Service Failed", e);
+            throw new MojoExecutionException("Test Run Error. Aborting...", e);
+        } finally {
+            runner.shutdown();
+            stopHttpService();
         }
 
-        UrlFactory urlFactory = new UrlFactory(getTestSourceContext(), getPort());
-        for (String test : getQUnitTests()) {
-            log.info(urlFactory.getUrlOfTest(test));
+        resultsSummary.printSummary();
+        if (resultsSummary.hasFailure()) {
+            throw new MojoFailureException("One or more test failures");
         }
+    }
+
+    private void stopHttpService() {
+        final Log log = getLog();
         try {
             service.stop();
             service.waitUntilFinished();
+            log.info("HTTP Service Stopped");
         } catch (Exception e) {
             log.warn("HTTP Service has failed to shutdown correctly", e);
         }
-        log.info("HTTP Service Stopped");
     }
 
     private String[] getQUnitTests() {
@@ -99,6 +114,6 @@ public class UnitTestMojo extends AbstractQUnitMojo {
         } else {
             return Arrays.asList(excludes);
         }
-    }   
-    
+    }
+
 }

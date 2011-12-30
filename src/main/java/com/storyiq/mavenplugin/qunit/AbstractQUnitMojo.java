@@ -116,6 +116,7 @@ public abstract class AbstractQUnitMojo extends AbstractMojo {
     
     protected void startHttpService() throws MojoExecutionException {
         final Log log = getLog();
+                
         service = new HttpService(getPort(), getResourceMap());
         try {
             log.info("Starting HTTP Service");
