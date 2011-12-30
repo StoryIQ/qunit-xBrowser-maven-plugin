@@ -36,6 +36,12 @@
 		<name>StoryIQ Ltd</name>
 		<url>www.storyiq.com</url>
 	</organization>
+	<developers>
+	   <developer>
+	       <name>Alan Parkinson</name>
+	       <organization>StoryIQ Ltd</organization>
+	   </developer>
+	</developers>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
@@ -57,12 +63,12 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <version>2.15.0</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>2.15.0</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -74,7 +80,7 @@
 			<artifactId>mockito-core</artifactId>
 			<version>1.8.5</version>
 			<scope>test</scope>
-		</dependency>		
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -88,4 +94,34 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>release-sign-artifacts</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.1</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
