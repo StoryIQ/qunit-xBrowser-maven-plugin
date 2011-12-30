@@ -9,8 +9,9 @@ public class SummaryReporter implements ResultReporter {
     private int totalTests = 0;
     private int totalFiles = 0;
     private int passed = 0;
-    private int failed = 0;
+    private int totalFails = 0;
     private int skipped = 0;
+    private boolean failure = false;
 
     public SummaryReporter(PrintStream out) {
         this.out = out;
@@ -26,8 +27,9 @@ public class SummaryReporter implements ResultReporter {
         totalFiles++;
         totalTests += total;
         this.passed += passed;
-        this.failed += failed;
+        this.totalFails += failed;
         this.skipped += skipped;
+        failure = failure || failed > 0;
         out.printf("Result: %1d tests of %1d passed, %1d failed, %1d skipped",
                 passed, total, failed, skipped);
         if (failed > 0) {
@@ -37,14 +39,15 @@ public class SummaryReporter implements ResultReporter {
     }
 
     public boolean hasFailure() {
-        return failed > 0;
+        return failure;
     }
 
     public void printSummary() {
         out.println();
         out.println("Results :");
         out.println();
-        out.printf("Total: %1d, Passed: %1d, Failures: %1d, Skipped: %1d\n", totalTests, passed, failed, skipped);
+        out.printf("Total: %1d, Passed: %1d, Failures: %1d, Skipped: %1d\n",
+                totalTests, passed, totalFails, skipped);
         out.println();
     }
 
@@ -57,6 +60,7 @@ public class SummaryReporter implements ResultReporter {
     @Override
     public void aborted(String string) {
         out.println(string);
+        failure = true;
     }
 
 }
