@@ -25,17 +25,31 @@ public class CompositeReporter implements ResultReporter {
     }
 
     @Override
-    public void startTest(String name) {
+    public void suiteStart(String name) {
         for (ResultReporter reporter : reporters) {
-            reporter.startTest(name);
+            reporter.suiteStart(name);
         }
     }
 
     @Override
-    public void testStopped(int total, int passed, int failed) {
+    public void testEnd(int total, int passed, int failed, int skipped) {
         for (ResultReporter reporter : reporters) {
-            reporter.testStopped(total, passed, failed);
+            reporter.testEnd(total, passed, failed, skipped);
         }
+    }
+
+    @Override
+    public void suiteEnd() {
+        for (ResultReporter reporter : reporters) {
+            reporter.suiteEnd();
+        }        
+    }
+
+    @Override
+    public void aborted(String string) {
+        for (ResultReporter reporter : reporters) {
+            reporter.aborted(string);
+        }        
     }
 
 }

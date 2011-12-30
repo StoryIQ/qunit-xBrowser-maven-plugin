@@ -3,13 +3,11 @@ package com.storyiq.mavenplugin.qunit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import com.storyiq.mavenplugin.qunit.reporting.ResultReporter;
-import com.storyiq.mavenplugin.qunit.selenium.QUnitPageObject;
-import com.storyiq.mavenplugin.qunit.selenium.TestResult;
+import com.storyiq.mavenplugin.qunit.selenium.ResultListener;
 
 public class UnitTestRunner {
 
@@ -29,27 +27,17 @@ public class UnitTestRunner {
         driver = new FirefoxDriver();
     }
 
-    public void run(String name, String testUrl) {
-        reporter.startTest(name);
-        driver.get(testUrl);
-        QUnitPageObject pageObject = new QUnitPageObject(driver);
-        try {
-            TestResult result = pageObject.getResult();
-            reporter.testStopped(result.getTotal(), result.getPassed(),
-                    result.getFailed());
-        } catch (TimeoutException e) {
-            // TODO: Report this timeout
-        }
-
-    }
-
     public void shutdown() {
         driver.close();
     }
 
     public void runTests(String[] unitTests) {
+        ResultListener pageObject = new ResultListener(driver);
         for (String name : unitTests) {
-            run(name, urlProvider.getUrlOfTest(name));
+            reporter.suiteStart(name);
+            String urlOfTest = urlProvider.getUrlOfTest(name);
+            pageObject.listenTo(urlOfTest, reporter);
+            reporter.suiteEnd();
         }
     }
 
