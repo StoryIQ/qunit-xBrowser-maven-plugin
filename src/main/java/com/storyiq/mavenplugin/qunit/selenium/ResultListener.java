@@ -1,5 +1,6 @@
 package com.storyiq.mavenplugin.qunit.selenium;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -11,6 +12,8 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.storyiq.mavenplugin.qunit.reporting.ResultReporter;
+import com.storyiq.mavenplugin.qunit.reporting.TestMethodResult;
+import com.storyiq.mavenplugin.qunit.reporting.TestResult;
 
 public class ResultListener {
 
@@ -20,7 +23,7 @@ public class ResultListener {
     private static final String TOTAL_FAILED_CSS_CLASS = "failed";
     private static final String TOTAL_PASSED_CSS_CLASS = "passed";
     private static final String TEST_RESULT_TOTALS_PARENT_ID = "qunit-testresult";
-    
+
     private final WebDriver driver;
 
     public ResultListener(WebDriver driver) {
@@ -36,6 +39,11 @@ public class ResultListener {
             reporter.aborted("Test did not start");
             return;
         }
+
+        WebElement header = driver.findElement(By.id("qunit-header"));
+        String name = header.getText();
+
+        reporter.testStarted(url, name);
 
         try {
             WebDriverWait finishWait = new WebDriverWait(driver,
@@ -55,13 +63,51 @@ public class ResultListener {
         int skippedTotal = 0;
         for (WebElement result : testCases) {
             String cssClass = result.getAttribute("class");
-            if (cssClass.equalsIgnoreCase("pass")) {
+            TestResult status = TestResult.getResult(cssClass);
+
+            switch (status) {
+            case PASSED:
                 passedTotal++;
-            } else if (cssClass.equalsIgnoreCase("fail")) {
+                break;
+            case FAILED:
                 failedTotal++;
-            } else {
+                break;
+            case SKIPPED:
                 skippedTotal++;
+                break;
             }
+
+            WebElement moduleNameElement = result.findElement(By
+                    .className("module-name"));
+            String moduleName = moduleNameElement.getText();
+
+            WebElement testNameElement = result.findElement(By
+                    .className("test-name"));
+            String testName = testNameElement.getText();
+
+            ArrayList<TestMethodResult> failureMessages = new ArrayList<TestMethodResult>();
+            if (status == TestResult.FAILED) {
+                List<WebElement> failures = result.findElements(By
+                        .cssSelector("ol > li.fail"));
+                for (WebElement failure : failures) {
+                    WebElement methodName = failure.findElement(By
+                            .cssSelector(".test-message"));
+                    WebElement expected = failure.findElement(By
+                            .cssSelector(".test-expected > td"));
+                    WebElement actual = failure.findElement(By
+                            .cssSelector(".test-actual > td"));
+                    WebElement sourceLine = failure.findElement(By
+                            .cssSelector(".test-source > td"));
+                    TestMethodResult method = new TestMethodResult();
+                    method.setMethodName(methodName.getText());
+                    method.setExpected(expected.getText());
+                    method.setActual(actual.getText());
+                    method.setSourceLine(sourceLine.getText());
+                    failureMessages.add(method);
+                }
+            }
+
+            reporter.recordResult(status, testName, moduleName, failureMessages);
         }
         reporter.testEnd(testCases.size(), passedTotal, failedTotal,
                 skippedTotal);
@@ -79,9 +125,11 @@ public class ResultListener {
             getCountFromResult(qunitResults, TOTAL_TESTS_RUN_CSS_CLASS);
             return true;
         }
-        
-        private int getCountFromResult(WebElement qunitResults, String reportClass) {
-            WebElement passed = qunitResults.findElement(By.className(reportClass));
+
+        private int getCountFromResult(WebElement qunitResults,
+                String reportClass) {
+            WebElement passed = qunitResults.findElement(By
+                    .className(reportClass));
             return Integer.valueOf(passed.getText());
         }
     }
@@ -96,7 +144,7 @@ public class ResultListener {
             WebElement passedTests = null;
             try {
                 passedTests = driver.findElement(By
-                    .cssSelector("#qunit-testresult > span.passed"));
+                        .cssSelector("#qunit-testresult > span.passed"));
             } catch (NoSuchElementException e) {
             }
 

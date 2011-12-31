@@ -8,10 +8,10 @@ public class CompositeReporter implements ResultReporter {
 
     private List<ResultReporter> reporters = new ArrayList<ResultReporter>();
 
-    public CompositeReporter(ResultReporter ... reporters) {
+    public CompositeReporter(ResultReporter... reporters) {
         this.reporters = Arrays.asList(reporters);
     }
-    
+
     public CompositeReporter(List<ResultReporter> reporters) {
         this.reporters = reporters;
     }
@@ -42,14 +42,30 @@ public class CompositeReporter implements ResultReporter {
     public void suiteEnd() {
         for (ResultReporter reporter : reporters) {
             reporter.suiteEnd();
-        }        
+        }
     }
 
     @Override
     public void aborted(String string) {
         for (ResultReporter reporter : reporters) {
             reporter.aborted(string);
-        }        
+        }
+    }
+
+    @Override
+    public void testStarted(String url, String name) {
+        for (ResultReporter reporter : reporters) {
+            reporter.testStarted(url, name);
+        }
+    }
+
+    @Override
+    public void recordResult(TestResult status, String testName,
+            String moduleName, ArrayList<TestMethodResult> failures) {
+        for (ResultReporter reporter : reporters) {
+            reporter.recordResult(status, testName, moduleName, failures);
+        }
+
     }
 
 }

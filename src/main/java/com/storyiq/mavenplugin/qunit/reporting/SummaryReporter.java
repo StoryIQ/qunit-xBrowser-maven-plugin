@@ -1,6 +1,7 @@
 package com.storyiq.mavenplugin.qunit.reporting;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 
 public class SummaryReporter implements ResultReporter {
 
@@ -19,7 +20,12 @@ public class SummaryReporter implements ResultReporter {
 
     @Override
     public void suiteStart(String name) {
-        out.println("Running " + name);
+
+    }
+
+    @Override
+    public void testStarted(String url, String name) {
+        out.printf("Starting %s (%s)\n", name, url);
     }
 
     @Override
@@ -29,13 +35,26 @@ public class SummaryReporter implements ResultReporter {
         this.passed += passed;
         this.totalFails += failed;
         this.skipped += skipped;
-        failure = failure || failed > 0;
+
         out.printf("Result: %1d tests of %1d passed, %1d failed, %1d skipped",
                 passed, total, failed, skipped);
         if (failed > 0) {
             out.print(" <<< FAILURE!");
         }
         out.println();
+    }
+
+    @Override
+    public void recordResult(TestResult status, String testName,
+            String moduleName, ArrayList<TestMethodResult> failureMessages) {
+        if (status == TestResult.FAILED) {
+            failure = true;
+            for (TestMethodResult result : failureMessages) {
+                out.printf("Failed: %s - %s\n", testName,
+                        result.getMethodName());
+            }
+        }
+
     }
 
     public boolean hasFailure() {
@@ -53,7 +72,6 @@ public class SummaryReporter implements ResultReporter {
 
     @Override
     public void suiteEnd() {
-        // TODO Auto-generated method stub
 
     }
 

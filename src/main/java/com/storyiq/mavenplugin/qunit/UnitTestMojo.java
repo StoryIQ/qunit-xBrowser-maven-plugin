@@ -1,5 +1,6 @@
 package com.storyiq.mavenplugin.qunit;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,6 +15,7 @@ import com.storyiq.mavenplugin.qunit.reporting.CompositeReporter;
 import com.storyiq.mavenplugin.qunit.reporting.LoggingReporter;
 import com.storyiq.mavenplugin.qunit.reporting.ResultReporter;
 import com.storyiq.mavenplugin.qunit.reporting.SummaryReporter;
+import com.storyiq.mavenplugin.qunit.reporting.TextFileResultReporter;
 
 /**
  * 
@@ -44,11 +46,18 @@ public class UnitTestMojo extends AbstractQUnitMojo {
     private String[] excludes;
 
     /**
-     * Set this to "true" to bypass unit tests entirely.
+     * Set this to "true" to bypass JavaScript Unit tests entirely.
      * 
      * @parameter default-value="false" expression="${maven.test.skip}"
      */
     private boolean skip;
+
+    /**
+     * The directory for publishing test results
+     * 
+     * @parameter default-value="${project.build.directory}/qunit"
+     */
+    private File reportDirectory;
 
     private final FileSetManager fileManager = new FileSetManager();
 
@@ -63,11 +72,15 @@ public class UnitTestMojo extends AbstractQUnitMojo {
         startHttpService();
         UrlFactory urlFactory = new UrlFactory(getTestSourceContext(),
                 getPort());
+
+        TextFileResultReporter fileReport = new TextFileResultReporter(
+                reportDirectory);
         SummaryReporter resultsSummary = new SummaryReporter(System.out);
-        ResultReporter reporter = new CompositeReporter(new LoggingReporter(log), resultsSummary);
+        ResultReporter reporter = new CompositeReporter(
+                new LoggingReporter(log), resultsSummary, fileReport);
         UnitTestRunner runner = new UnitTestRunner(reporter, urlFactory);
-        try {        
-            runner.runTests(getQUnitTests());            
+        try {
+            runner.runTests(getQUnitTests());
         } catch (Exception e) {
             throw new MojoExecutionException("Test Run Error. Aborting...", e);
         } finally {

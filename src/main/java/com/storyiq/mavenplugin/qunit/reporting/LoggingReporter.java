@@ -1,5 +1,7 @@
 package com.storyiq.mavenplugin.qunit.reporting;
 
+import java.util.ArrayList;
+
 import org.apache.maven.plugin.logging.Log;
 
 public class LoggingReporter implements ResultReporter {
@@ -24,13 +26,19 @@ public class LoggingReporter implements ResultReporter {
 
     @Override
     public void suiteEnd() {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void aborted(String string) {
-        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void testStarted(String url, String name) {
+    }
+
+    @Override
+    public void recordResult(TestResult status, String testName,
+            String moduleName, ArrayList<TestMethodResult> failureMessages) {
 
     }
 
