@@ -61,7 +61,7 @@ public class CompositeReporter implements ResultReporter {
 
     @Override
     public void recordResult(TestResult status, String testName,
-            String moduleName, ArrayList<TestMethodResult> failures) {
+            String moduleName, List<TestMethodResult> failures) {
         for (ResultReporter reporter : reporters) {
             reporter.recordResult(status, testName, moduleName, failures);
         }

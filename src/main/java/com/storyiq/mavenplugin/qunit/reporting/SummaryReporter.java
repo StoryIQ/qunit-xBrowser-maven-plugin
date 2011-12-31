@@ -1,7 +1,7 @@
 package com.storyiq.mavenplugin.qunit.reporting;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
+import java.util.List;
 
 public class SummaryReporter implements ResultReporter {
 
@@ -46,7 +46,7 @@ public class SummaryReporter implements ResultReporter {
 
     @Override
     public void recordResult(TestResult status, String testName,
-            String moduleName, ArrayList<TestMethodResult> failureMessages) {
+            String moduleName, List<TestMethodResult> failureMessages) {
         if (status == TestResult.FAILED) {
             failure = true;
             for (TestMethodResult result : failureMessages) {

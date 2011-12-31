@@ -1,6 +1,6 @@
 package com.storyiq.mavenplugin.qunit.reporting;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.maven.plugin.logging.Log;
 
@@ -38,7 +38,7 @@ public class LoggingReporter implements ResultReporter {
 
     @Override
     public void recordResult(TestResult status, String testName,
-            String moduleName, ArrayList<TestMethodResult> failureMessages) {
+            String moduleName, List<TestMethodResult> failureMessages) {
 
     }
 

@@ -3,7 +3,7 @@ package com.storyiq.mavenplugin.qunit.reporting;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.util.ArrayList;
+import java.util.List;
 
 public class TextFileResultReporter implements ResultReporter {
 
@@ -55,7 +55,7 @@ public class TextFileResultReporter implements ResultReporter {
 
     @Override
     public void recordResult(TestResult status, String testName,
-            String moduleName, ArrayList<TestMethodResult> failureMessages) {
+            String moduleName, List<TestMethodResult> failureMessages) {
         if (status == TestResult.FAILED) {
             report.printf("Failed: %s\n", testName);
             for (TestMethodResult result : failureMessages) {

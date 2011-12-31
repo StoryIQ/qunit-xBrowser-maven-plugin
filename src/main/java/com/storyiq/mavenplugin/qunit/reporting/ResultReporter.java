@@ -1,6 +1,6 @@
 package com.storyiq.mavenplugin.qunit.reporting;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface ResultReporter {
 
@@ -15,6 +15,6 @@ public interface ResultReporter {
     public abstract void testStarted(String url, String name);
 
     public abstract void recordResult(TestResult status, String testName,
-            String moduleName, ArrayList<TestMethodResult> failedMethods);
+            String moduleName, List<TestMethodResult> failedMethods);
 
 }

@@ -77,9 +77,7 @@ public class ResultListener {
                 break;
             }
 
-            WebElement moduleNameElement = result.findElement(By
-                    .className("module-name"));
-            String moduleName = moduleNameElement.getText();
+            String moduleName = getModuleName(result);
 
             WebElement testNameElement = result.findElement(By
                     .className("test-name"));
@@ -90,19 +88,25 @@ public class ResultListener {
                 List<WebElement> failures = result.findElements(By
                         .cssSelector("ol > li.fail"));
                 for (WebElement failure : failures) {
-                    WebElement methodName = failure.findElement(By
-                            .cssSelector(".test-message"));
-                    WebElement expected = failure.findElement(By
-                            .cssSelector(".test-expected > td"));
-                    WebElement actual = failure.findElement(By
-                            .cssSelector(".test-actual > td"));
-                    WebElement sourceLine = failure.findElement(By
-                            .cssSelector(".test-source > td"));
                     TestMethodResult method = new TestMethodResult();
-                    method.setMethodName(methodName.getText());
-                    method.setExpected(expected.getText());
-                    method.setActual(actual.getText());
-                    method.setSourceLine(sourceLine.getText());
+                    try {
+                        WebElement methodName = failure.findElement(By
+                                .cssSelector(".test-message"));
+                        WebElement expected = failure.findElement(By
+                                .cssSelector(".test-expected > td"));
+                        WebElement actual = failure.findElement(By
+                                .cssSelector(".test-actual > td"));
+                        WebElement sourceLine = failure.findElement(By
+                                .cssSelector(".test-source > td"));
+
+                        method.setMethodName(methodName.getText());
+                        method.setExpected(expected.getText());
+                        method.setActual(actual.getText());
+                        method.setSourceLine(sourceLine.getText());
+                    } catch (NoSuchElementException e) {
+                        method.setMethodName(failure.getText());
+                    }
+
                     failureMessages.add(method);
                 }
             }
@@ -112,6 +116,18 @@ public class ResultListener {
         reporter.testEnd(testCases.size(), passedTotal, failedTotal,
                 skippedTotal);
 
+    }
+
+    private String getModuleName(WebElement result) {
+        String moduleName;
+        try {
+            WebElement moduleNameElement = result.findElement(By
+                    .className("module-name"));
+            moduleName = moduleNameElement.getText();
+        } catch (NoSuchElementException e) {
+            moduleName = null;
+        }
+        return moduleName;
     }
 
     private class TestsHaveFinished implements ExpectedCondition<Boolean> {
