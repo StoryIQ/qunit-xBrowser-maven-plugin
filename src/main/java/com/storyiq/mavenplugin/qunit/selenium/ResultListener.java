@@ -18,13 +18,13 @@ import com.storyiq.mavenplugin.qunit.reporting.TestResult;
 public class ResultListener {
 
     private static final String QUNIT_TEST_CASE_CSS_SELECTOR = "#qunit-tests > li";
-    private static final int TEST_FINISH_TIMEOUT_IN_SECONDS = 120;
     private static final String TOTAL_TESTS_RUN_CSS_CLASS = "total";
     private static final String TOTAL_FAILED_CSS_CLASS = "failed";
     private static final String TOTAL_PASSED_CSS_CLASS = "passed";
     private static final String TEST_RESULT_TOTALS_PARENT_ID = "qunit-testresult";
 
     private final WebDriver driver;
+    private int finishTimeout = 120;
 
     public ResultListener(WebDriver driver) {
         this.driver = driver;
@@ -46,14 +46,12 @@ public class ResultListener {
         reporter.testStarted(url, name);
 
         try {
-            WebDriverWait finishWait = new WebDriverWait(driver,
-                    TEST_FINISH_TIMEOUT_IN_SECONDS);
+            WebDriverWait finishWait = new WebDriverWait(driver, finishTimeout);
             finishWait.until(new TestsHaveFinished());
 
         } catch (TimeoutException e) {
             reporter.aborted(String.format(
-                    "Test did not finish within %1d seconds",
-                    TEST_FINISH_TIMEOUT_IN_SECONDS));
+                    "Test did not finish within %1d seconds", finishTimeout));
         }
 
         final List<WebElement> testCases = driver.findElements(By
@@ -116,6 +114,14 @@ public class ResultListener {
         reporter.testEnd(testCases.size(), passedTotal, failedTotal,
                 skippedTotal);
 
+    }
+
+    public int getFinishTimeout() {
+        return finishTimeout;
+    }
+
+    public void setFinishTimeout(int finishTimeout) {
+        this.finishTimeout = finishTimeout;
     }
 
     private String getModuleName(WebElement result) {

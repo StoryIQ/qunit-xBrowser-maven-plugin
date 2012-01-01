@@ -31,6 +31,23 @@ Please read [LICENSE] (https://github.com/StoryIQ/qunit-xBrowser-maven-plugin/LI
 
 Contributions are most welcome, you will need a JDK, Maven and Git to start working with the code. Please set your IDE/text editor to use:
 
+### Submodules ###
+
+The repository uses submodules and they are required for the tests in the build to successfully work.
+
+Following are the steps to get the submodules:
+
+1. `git clone https://github.com/StoryIQ/qunit-xBrowser-maven-plugin.git`
+2. `git submodule init`
+3. `git submodule update`
+
+Or:
+
+1. `git clone https://github.com/StoryIQ/qunit-xBrowser-maven-plugin.git`
+2. `git submodule update --init`
+
+### Style Guidelines ###
+
 * UTF-8 file encoding
 * LF (UNIX) line endings
 * 4 Space indent (no tabs)

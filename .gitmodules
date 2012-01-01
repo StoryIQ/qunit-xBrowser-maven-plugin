@@ -1,0 +1,3 @@
+[submodule "src/test/resources/mockedQunit/qunit"]
+	path = src/test/resources/mockedQunit/qunit
+	url = git://github.com/jquery/qunit.git

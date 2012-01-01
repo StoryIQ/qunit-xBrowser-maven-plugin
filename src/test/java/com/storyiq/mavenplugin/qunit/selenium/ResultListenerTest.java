@@ -5,7 +5,10 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -62,8 +65,8 @@ public class ResultListenerTest {
         directoryHandler.setBaseResource(new FileResource(directory));
         handlers.addHandler(directoryHandler);
 
-        handlers.addHandler(new DefaultHandler()); // Returns 404 for unknown
-                                                   // resource
+        handlers.addHandler(new DefaultHandler());
+
         server.setHandler(handlers);
         server.start();
     }
@@ -104,36 +107,47 @@ public class ResultListenerTest {
     }
 
     @SuppressWarnings("unchecked")
-    @Test
-    public void failedQUnitTestUsingOkMethod() {
+    @Test(timeout = 15000)
+    public void understandsAllQUnitAssertionFailures() {
         ResultReporter reporter = mock(ResultReporter.class);
 
         ResultListener listener = new ResultListener(driver);
-        listener.listenTo("http://localhost:4200/qunitFailedOkMethod.html",
+        listener.setFinishTimeout(10);
+        listener.listenTo("http://localhost:4200/allAssertionFailures.html",
                 reporter);
 
         ArgumentCaptor<List> argument = ArgumentCaptor.forClass(List.class);
-        verify(reporter, times(1)).recordResult(any(TestResult.class),
+        verify(reporter, times(1)).recordResult(eq(TestResult.FAILED),
                 anyString(), anyString(), argument.capture());
-        List<TestMethodResult> results = argument.getValue();
-        assertEquals("this.foobar is defined", results.get(0).getMethodName());
-
+        List<TestMethodResult> failures = argument.getValue();
+        assertEquals(8, failures.size());
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void failedQUnitTestUsingEqualsMethod() {
+    @Test(timeout = 15000)
+    public void qunitAbortsOnUnitTestLoadingFailure() {
         ResultReporter reporter = mock(ResultReporter.class);
 
         ResultListener listener = new ResultListener(driver);
-        listener.listenTo("http://localhost:4200/qunitFailedEqualsMethod.html",
-                reporter);
+        listener.listenTo("http://localhost:4200/startState.html", reporter);
 
-        ArgumentCaptor<List> argument = ArgumentCaptor.forClass(List.class);
-        verify(reporter, times(1)).recordResult(any(TestResult.class),
-                anyString(), anyString(), argument.capture());
-        List<TestMethodResult> results = argument.getValue();
-        assertEquals("failed", results.get(0).getMethodName());
+        verify(reporter, times(1)).aborted(eq("Test did not start"));
+        verify(reporter, never()).testStarted(anyString(), anyString());
+    }
 
+    @Test(timeout = 15000)
+    public void qunitAbortsIfUnitTestsHangs() {
+        ResultReporter reporter = mock(ResultReporter.class);
+
+        ResultListener listener = new ResultListener(driver);
+        listener.setFinishTimeout(10);
+        listener.listenTo("http://localhost:4200/hangingTests.html", reporter);
+
+        verify(reporter, times(1)).testStarted(anyString(), anyString());
+        verify(reporter, times(2)).recordResult(eq(TestResult.PASSED),
+                anyString(), anyString(), anyListOf(TestMethodResult.class));
+        verify(reporter, times(1)).recordResult(eq(TestResult.SKIPPED),
+                anyString(), anyString(), anyListOf(TestMethodResult.class));
+        verify(reporter, times(1)).aborted(
+                startsWith("Test did not finish within"));
     }
 }
