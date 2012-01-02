@@ -32,23 +32,31 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mockito.ArgumentCaptor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 
 import com.storyiq.mavenplugin.qunit.reporting.ResultReporter;
 import com.storyiq.mavenplugin.qunit.reporting.TestMethodResult;
 import com.storyiq.mavenplugin.qunit.reporting.TestResult;
 
 @RunWith(Parameterized.class)
-public class ResultListenerTest {
+public class ResultListenerTest implements WebDriverProvider {
 
     private final Class<? extends WebDriver> driverClass;
     private static Server server = new Server();
     private WebDriver driver;
 
     @Parameterized.Parameters
-    public static Collection<Class<?>[]> mojos() {
+    public static Collection<Class<?>[]> browsers() {
         List<Class<?>[]> driverClasses = new ArrayList<Class<?>[]>();
         driverClasses.add(new Class<?>[] { FirefoxDriver.class });
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            driverClasses.add(new Class<?>[] { InternetExplorerDriver.class });
+        }
+        if (System.getProperty("webdriver.chrome.driver") != null) {
+            driverClasses.add(new Class<?>[] { ChromeDriver.class });
+        }
         return driverClasses;
     }
 
@@ -89,14 +97,14 @@ public class ResultListenerTest {
 
     @After
     public void stopBrowser() {
-        driver.close();
+        driver.quit();
     }
 
     @Test
     public void failedQUnitTestWithoutModuleName() {
         ResultReporter reporter = mock(ResultReporter.class);
 
-        ResultListener listener = new ResultListener(driver);
+        ResultListener listener = new ResultListener(this);
         listener.listenTo("http://localhost:4200/noModuleName.html", reporter);
 
         ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
@@ -111,7 +119,7 @@ public class ResultListenerTest {
     public void understandsAllQUnitAssertionFailures() {
         ResultReporter reporter = mock(ResultReporter.class);
 
-        ResultListener listener = new ResultListener(driver);
+        ResultListener listener = new ResultListener(this);
         listener.setFinishTimeout(10);
         listener.listenTo("http://localhost:4200/allAssertionFailures.html",
                 reporter);
@@ -127,7 +135,7 @@ public class ResultListenerTest {
     public void qunitAbortsOnUnitTestLoadingFailure() {
         ResultReporter reporter = mock(ResultReporter.class);
 
-        ResultListener listener = new ResultListener(driver);
+        ResultListener listener = new ResultListener(this);
         listener.listenTo("http://localhost:4200/startState.html", reporter);
 
         verify(reporter, times(1)).aborted(eq("Test did not start"));
@@ -138,7 +146,7 @@ public class ResultListenerTest {
     public void qunitAbortsIfUnitTestsHangs() {
         ResultReporter reporter = mock(ResultReporter.class);
 
-        ResultListener listener = new ResultListener(driver);
+        ResultListener listener = new ResultListener(this);
         listener.setFinishTimeout(10);
         listener.listenTo("http://localhost:4200/hangingTests.html", reporter);
 
@@ -149,5 +157,10 @@ public class ResultListenerTest {
                 anyString(), anyString(), anyListOf(TestMethodResult.class));
         verify(reporter, times(1)).aborted(
                 startsWith("Test did not finish within"));
+    }
+
+    @Override
+    public WebDriver createDriver() {
+        return driver;
     }
 }

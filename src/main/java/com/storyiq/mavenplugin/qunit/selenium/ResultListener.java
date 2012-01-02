@@ -23,14 +23,15 @@ public class ResultListener {
     private static final String TOTAL_PASSED_CSS_CLASS = "passed";
     private static final String TEST_RESULT_TOTALS_PARENT_ID = "qunit-testresult";
 
-    private final WebDriver driver;
+    private final WebDriverProvider driverProvider;
     private int finishTimeout = 120;
 
-    public ResultListener(WebDriver driver) {
-        this.driver = driver;
+    public ResultListener(WebDriverProvider driverProvider) {
+        this.driverProvider = driverProvider;
     }
 
     public void listenTo(String url, ResultReporter reporter) {
+        final WebDriver driver = driverProvider.createDriver();
         driver.get(url);
         try {
             WebDriverWait startWait = new WebDriverWait(driver, 10);

@@ -23,18 +23,24 @@ public class SourceMappingTest {
     private static final String TEST_FOLDER_CONTEXT = "/test";
     private static final String ROOT_CONTEXT = "/";
     private static final File DIRECTORY = new File(".");
-    
+
     private final AbstractQUnitMojo mojoUnderTest;
 
     public SourceMappingTest(AbstractQUnitMojo mojoUnderTest) {
         this.mojoUnderTest = mojoUnderTest;
     }
-    
+
     @Parameterized.Parameters
     public static Collection<AbstractQUnitMojo[]> mojos() {
-        return Arrays.asList(new AbstractQUnitMojo[] {new InteractiveMojo()}, new AbstractQUnitMojo[] {new UnitTestMojo()});
+        UnitTestMojo unitTestMojo = new UnitTestMojo();
+        Browser browser = new Browser();
+        browser.setName("firefox");
+        unitTestMojo.setBrowser(browser);
+
+        return Arrays.asList(new AbstractQUnitMojo[] { new InteractiveMojo() },
+                new AbstractQUnitMojo[] { unitTestMojo });
     }
-    
+
     @Test
     public void noDuplicateResourceContexts() throws MojoFailureException {
         AbstractQUnitMojo mojo = createMojo();
@@ -53,7 +59,8 @@ public class SourceMappingTest {
     }
 
     @Test
-    public void resourceContextsShouldNotMatchTestSourceContext() throws MojoFailureException {
+    public void resourceContextsShouldNotMatchTestSourceContext()
+            throws MojoFailureException {
         AbstractQUnitMojo mojo = createMojo();
         mojo.setTestSourceContext(TEST_FOLDER_CONTEXT);
         mojo.setTestSourceDirectory(DIRECTORY);
@@ -88,7 +95,8 @@ public class SourceMappingTest {
     }
 
     @Test
-    public void testSourceDirectoryMustBeADirectory() throws URISyntaxException, MojoFailureException {
+    public void testSourceDirectoryMustBeADirectory()
+            throws URISyntaxException, MojoFailureException {
         AbstractQUnitMojo mojo = createMojo();
         mojo.setTestSourceContext(ROOT_CONTEXT);
         File mockDirectory = mock(File.class);
@@ -108,7 +116,8 @@ public class SourceMappingTest {
     }
 
     @Test
-    public void mappedSourcePathDirectoriesMustExist() throws MojoFailureException {
+    public void mappedSourcePathDirectoriesMustExist()
+            throws MojoFailureException {
         AbstractQUnitMojo mojo = createMojo();
         mojo.setTestSourceContext(ROOT_CONTEXT);
         File mockDirectory = mock(File.class);

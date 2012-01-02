@@ -16,6 +16,7 @@ import com.storyiq.mavenplugin.qunit.reporting.LoggingReporter;
 import com.storyiq.mavenplugin.qunit.reporting.ResultReporter;
 import com.storyiq.mavenplugin.qunit.reporting.SummaryReporter;
 import com.storyiq.mavenplugin.qunit.reporting.TextFileResultReporter;
+import com.storyiq.mavenplugin.qunit.selenium.BrowserManager;
 
 /**
  * 
@@ -59,6 +60,14 @@ public class UnitTestMojo extends AbstractQUnitMojo {
      */
     private File reportDirectory;
 
+    /**
+     * The web browser to use for Unit Testing.
+     * 
+     * @parameter
+     * @required
+     */
+    private Browser browser;
+
     private final FileSetManager fileManager = new FileSetManager();
 
     @Override
@@ -67,6 +76,11 @@ public class UnitTestMojo extends AbstractQUnitMojo {
         if (skip) {
             log.info("Skipping QUnit tests");
             return;
+        }
+
+        if (browser == null || browser.getName() == null) {
+            throw new MojoExecutionException(
+                    "The browser property has not been defined. Which web browser should I be using?");
         }
 
         startHttpService();
@@ -78,7 +92,8 @@ public class UnitTestMojo extends AbstractQUnitMojo {
         SummaryReporter resultsSummary = new SummaryReporter(System.out);
         ResultReporter reporter = new CompositeReporter(
                 new LoggingReporter(log), resultsSummary, fileReport);
-        UnitTestRunner runner = new UnitTestRunner(reporter, urlFactory);
+        UnitTestRunner runner = new UnitTestRunner(reporter, urlFactory,
+                new BrowserManager(browser.getName(), browser.getProperties()));
         try {
             runner.runTests(getQUnitTests());
         } catch (Exception e) {
@@ -127,6 +142,14 @@ public class UnitTestMojo extends AbstractQUnitMojo {
         } else {
             return Arrays.asList(excludes);
         }
+    }
+
+    public void setBrowser(Browser browser) {
+        this.browser = browser;
+    }
+
+    public Browser getBrowser() {
+        return browser;
     }
 
 }

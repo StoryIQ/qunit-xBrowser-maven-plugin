@@ -30,7 +30,7 @@
 	   
 	   //Assertion to test if a callback throws an exception when run.
 	   raises( function() {
-		   colours[2] = "red";
+		   var colours = 1/0;
 	   }, TypeError, "message" );
 	   
     });
