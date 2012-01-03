@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/DECORATION/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://maven.apache.org/DECORATION/1.1.0 http://maven.apache.org/xsd/decoration-1.1.0.xsd" name="QUnit xBrowser Maven Plugin"> 
+	<skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-stylus-skin</artifactId>
+        <version>1.3</version>
+    </skin>
+
+  	<bannerRight>
+    	<name>Fork me on GitHub</name>
+    	<src>https://a248.e.akamai.net/assets.github.com/img/30f550e0d38ceb6ef5b81500c64d970b7fb0f028/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67</src>
+    	<alt>Fork me on GitHub</alt>
+    	<href>https://github.com/StoryIQ/qunit-xBrowser-maven-plugin</href>
+  	</bannerRight>
+  	
+    <body>
+    <menu name="Overview">
+      <item name="Introduction" href="index.html"/>
+      <item name="Goals" href="plugin-info.html"/>
+<!--       <item name="Usage" href="usage.html"/>
+      <item name="FAQ" href="faq.html"/> -->
+    </menu>
+
+  </body>
+
+</project>
