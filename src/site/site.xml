@@ -17,9 +17,21 @@
     <body>
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="plugin-info.html"/>
+      <item name="Goals" href="plugin-info.html">
+        <item name="Interactive Mode" href="interactive-mojo.html"/>
+        <item name="Unit Testing" href="test-mojo.html"/>
+      </item>
 <!--       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/> -->
+    </menu>
+    
+    <menu name="Web Browsers">
+    </menu>
+    
+    <menu name="Project Information">
+        <item name="Mailing List" href="mail-lists.html"/>
+        <item name="Issue Tracking" href="issue-tracking.html"/>
+        <item name="Source code" href="source-repository.html"/>
     </menu>
 
   </body>

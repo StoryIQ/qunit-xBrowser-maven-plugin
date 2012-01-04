@@ -1,0 +1,36 @@
+ -----
+ Cross Browser JavaScript Unit Testing with QUnit and Maven
+ -----
+
+QUnit xBrowser Maven Plugin
+
+    A Plugin for running JavaScript Unit Tests with QUnit as part of your Maven build process. The unit tests are run in real web browsers for accurate testing, and simple cross browser compatibility testing
+can be achieved by rerunning the test suites with different browsers.
+
+* Features
+
+ * Runs unit tests using real Web Browsers and not just headless JavaScript engines that aren't used in Web Browsers e.g. Rhino
+ 
+ * Provides all test and source files to the Web Browsers via a embedded HTTP Server. This avoids Browsers blocking content access on the local disk for security reasons
+ 
+ * JavaScript and HTML files can be linked and referenced between each other using absolute and relative links
+ 
+ * JavaScript and HTML files can be mapped to new folders names to replicate the folder structure of your built web service
+
+* Getting Started
+
+
+** Where can I find the plugin?
+
+ Final releases will be published in {{{http://search.maven.org/}Maven Central}}, so no additional repositories are required. Until then you can grab 
+ development SNAPSHOT releases by adding this repository to your POM:
+
++-----+
+
+<repository>
+    <id>sonatype-snapshots</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+</repository>
+
++-----+
+
