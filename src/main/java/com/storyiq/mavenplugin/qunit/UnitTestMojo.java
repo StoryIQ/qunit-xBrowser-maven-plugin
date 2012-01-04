@@ -19,6 +19,7 @@ import com.storyiq.mavenplugin.qunit.reporting.TextFileResultReporter;
 import com.storyiq.mavenplugin.qunit.selenium.BrowserManager;
 
 /**
+ * Runs JavaScript units tests with QUnit in the specified Web browser.
  * 
  * @goal test
  * @phase test
@@ -61,7 +62,10 @@ public class UnitTestMojo extends AbstractQUnitMojo {
     private File reportDirectory;
 
     /**
-     * The web browser to use for Unit Testing.
+     * The web browser to use for Unit Testing. <code><br/>
+     * &lt;browser><br/>
+     * &nbsp;&lt;name>firefox&lt;/name><br/>
+     * &lt;/browser><br/>
      * 
      * @parameter
      * @required
