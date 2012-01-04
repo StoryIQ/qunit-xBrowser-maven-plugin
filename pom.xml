@@ -11,13 +11,13 @@
 	<artifactId>qunit-xbrowser-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
 	<version>0.2-SNAPSHOT</version>
-	<name>qunit xBrowser maven plugin</name>
+	<name>QUnit xBrowser Maven plugin</name>
 	<description>Maven Plugin for running javascript unit tests on multiple web browsers for compatibility testing. qunit is the supported javascript unit testing framework and cross browser testing is done using Selenium. </description>
-	<url>https://github.com/StoryIQ/qunit-xBrowser-maven-plugin</url>
+	<url>http://storyiq.github.com/qunit-xBrowser-maven-plugin/</url>
 	<licenses>
 		<license>
 			<name>MIT License</name>
-			<url>https://github.com/StoryIQ/qunit-xBrowser-maven-plugin/blob/master/LICENSE</url>
+			<url>https://raw.github.com/StoryIQ/qunit-xBrowser-maven-plugin/ec2336d0054ad7f29ef98e5d22ffba276724a01b/LICENSE</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
@@ -91,8 +91,34 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.3</version>
+                <configuration>
+                    <message>Creating site for ${project.version}</message>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>site</phase>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
+  
+     <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>2.9</version>                
+            </plugin>
+        </plugins>
+    </reporting>
 
 	<profiles>
 		<profile>
